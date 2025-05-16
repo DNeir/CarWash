@@ -12,6 +12,7 @@ class Empleado(models.Model):
     
 class Cliente(models.Model):
     nombre = models.CharField(max_length=100, null=False)
+    cedula = models.CharField(max_length=15, null=False)
     direccion = models.CharField(max_length=200, null=False)
     telefono = models.CharField(max_length=15, null=False)
     correo = models.EmailField(max_length=100, null=False)
