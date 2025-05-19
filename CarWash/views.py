@@ -111,12 +111,16 @@ def cita_editar(request, cita_id):
         servicio_ids = request.POST.getlist('servicio')
         fecha_hora = request.POST.get('fecha_hora')
         estado = request.POST.get('estado')
+        empleado_id = request.POST.get('empleado')
         notas = request.POST.get('notas', '')
         
         try:
             # Actualizar la cita con el vehículo seleccionado
             vehiculo = Vehiculo.objects.get(id=vehiculo_id)
+            empleado = Empleado.objects.get(id=empleado_id) if empleado_id else cita.empleado
+            
             cita.vehiculo = vehiculo
+            cita.empleado = empleado
             cita.fecha_hora = fecha_hora
             cita.estado = estado
             cita.notas = notas
@@ -129,6 +133,12 @@ def cita_editar(request, cita_id):
                 cita.servicios.add(servicio_obj)
             
             messages.success(request, 'Cita actualizada exitosamente')
+            
+            # Redireccionar a la página de detalles si se viene de allí
+            referer = request.META.get('HTTP_REFERER', '')
+            if f'citas/detalle/{cita_id}' in referer:
+                return redirect('cita_detalle', cita_id=cita_id)
+                
         except Exception as e:
             messages.error(request, f'Error al actualizar la cita: {str(e)}')
     

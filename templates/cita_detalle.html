@@ -4,6 +4,47 @@
     Detalle de Cita #{{ cita.id }}
 {% endblock %}
 
+{% block styles %}
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .card {
+                border: none !important;
+            }
+            
+            .card-header {
+                background-color: #f8f9fa !important;
+                color: #000 !important;
+                border-bottom: 1px solid #dee2e6 !important;
+            }
+            
+            .btn, button, .modal, .form-select, textarea, .d-grid {
+                display: none !important;
+            }
+            
+            a {
+                text-decoration: none !important;
+                color: #000 !important;
+            }
+            
+            body {
+                font-size: 12pt;
+            }
+            
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+            
+            table {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="row mb-4">
@@ -15,7 +56,7 @@
                     Fecha de creación: {{ cita.fecha_hora|date:"d/m/Y H:i" }}
                 </p>
             </div>
-            <div class="col-md-4 text-end">
+            <div class="col-md-4 text-end no-print">
                 <a href="{% url 'citas' %}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver a citas
                 </a>
@@ -132,13 +173,21 @@
             
             <div class="col-lg-4">
                 <!-- Acciones y estado -->
-                <div class="card mb-4">
+                <div class="card mb-4 no-print">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0"><i class="fas fa-tasks"></i> Acciones</h5>
                     </div>
                     <div class="card-body">
                         <form method="post" action="{% url 'cita_editar' cita.id %}">
                             {% csrf_token %}
+                            <!-- Mantener los campos originales del vehículo y servicios -->
+                            <input type="hidden" name="vehiculo" value="{{ cita.vehiculo.id }}">
+                            {% for servicio in cita.servicios.all %}
+                                <input type="hidden" name="servicio" value="{{ servicio.id }}">
+                            {% endfor %}
+                            <input type="hidden" name="fecha_hora" value="{{ cita.fecha_hora|date:'Y-m-d\TH:i' }}">
+                            <input type="hidden" name="notas" value="{{ cita.notas }}">
+                            
                             <div class="mb-3">
                                 <label for="estado" class="form-label">Cambiar estado:</label>
                                 <select name="estado" id="estado" class="form-select">
@@ -148,8 +197,18 @@
                                     <option value="Cancelada" {% if cita.estado == 'Cancelada' %}selected{% endif %}>Cancelada</option>
                                 </select>
                             </div>
+                            <div class="mb-3">
+                                <label for="empleado" class="form-label">Cambiar empleado:</label>
+                                <select name="empleado" id="empleado" class="form-select">
+                                    {% for empleado in empleados %}
+                                        <option value="{{ empleado.id }}" {% if empleado.id == cita.empleado.id %}selected{% endif %}>
+                                            {{ empleado.nombre }} ({{ empleado.puesto }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                             <button type="submit" class="btn btn-primary btn-block w-100">
-                                <i class="fas fa-save"></i> Actualizar Estado
+                                <i class="fas fa-save"></i> Actualizar Información
                             </button>
                         </form>
                         <hr>
@@ -175,9 +234,10 @@
                             {% for visita in cita.vehiculo.cliente.vehiculo_set.cita_set.all|dictsortreversed:"fecha_hora"|slice:":5" %}
                                 {% if visita.id != cita.id %}
                                     <li class="list-group-item">
-                                        <a href="{% url 'cita_detalle' visita.id %}">
+                                        <a href="{% url 'cita_detalle' visita.id %}" class="no-print">
                                             {{ visita.fecha_hora|date:"d/m/Y" }} - {{ visita.vehiculo }}
                                         </a>
+                                        <span class="print-only">{{ visita.fecha_hora|date:"d/m/Y" }} - {{ visita.vehiculo }}</span>
                                         <span class="badge bg-{% if visita.estado == 'Completada' %}success{% elif visita.estado == 'Pendiente' %}warning{% elif visita.estado == 'Cancelada' %}danger{% else %}info{% endif %} float-end">
                                             {{ visita.estado }}
                                         </span>
