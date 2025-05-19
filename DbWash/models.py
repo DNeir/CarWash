@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
@@ -42,10 +43,23 @@ class servicio(models.Model):
         return self.nombre
     
 class Cita(models.Model):
+    ESTADO_CHOICES = [
+        ('Pendiente', 'Pendiente'),
+        ('En proceso', 'En proceso'),
+        ('Completada', 'Completada'),
+        ('Cancelada', 'Cancelada'),
+    ]
+    
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
     empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
     fecha_hora = models.DateTimeField(null=False)
     servicios = models.ManyToManyField(servicio)
-    estado = models.CharField(max_length=20, choices=[('Pendiente', 'Pendiente'), ('Completada', 'Completada')], default='Pendiente')
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='Pendiente')
+    notas = models.TextField(null=True, blank=True)
+    fecha_creacion = models.DateTimeField(default=timezone.now)
+    
     def __str__(self):
-        return f"Cita para {self.vehiculo} con {self.empleado} el {self.fecha_hora}, estado: {self.estado} precio: {self.servicios.all()}" 
+        return f"Cita para {self.vehiculo} con {self.empleado} el {self.fecha_hora}, estado: {self.estado}"
+    
+    def get_total(self):
+        return sum(servicio.precio for servicio in self.servicios.all()) 
