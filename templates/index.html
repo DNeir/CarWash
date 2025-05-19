@@ -1,11 +1,145 @@
-{% extends "./layouts/base.html" %}
-
+{% extends "layouts/base.html" %}
 
 {% block title %}
-    CarWash
+    CarWash - Sistema de Gestión de Lavado de Autos
 {% endblock %}
 
 {% block content %}
-    <h1>CarWash</h1>
-    <p>Bienvenido a CarWash</p>
+    <div class="hero">
+        <div class="container text-center">
+            <h1><i class="fas fa-car-wash"></i> CarWash</h1>
+            <p class="lead">Sistema de Gestión de Lavado de Autos</p>
+            <a href="{% url 'citas' %}" class="btn btn-light btn-lg btn-animate">
+                <i class="fas fa-calendar-plus"></i> Agendar Cita
+            </a>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="dashboard-card">
+                <i class="fas fa-users"></i>
+                <h3>Clientes</h3>
+                <p>Gestiona la información de tus clientes.</p>
+                <a href="{% url 'bodega' %}" class="btn btn-primary mt-3">
+                    <i class="fas fa-arrow-right"></i> Acceder
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="dashboard-card">
+                <i class="fas fa-car"></i>
+                <h3>Vehículos</h3>
+                <p>Administra los vehículos registrados.</p>
+                <a href="{% url 'bodega' %}" class="btn btn-primary mt-3">
+                    <i class="fas fa-arrow-right"></i> Acceder
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="dashboard-card">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>Citas</h3>
+                <p>Agenda y gestiona las citas de lavado.</p>
+                <a href="{% url 'citas' %}" class="btn btn-primary mt-3">
+                    <i class="fas fa-arrow-right"></i> Acceder
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="dashboard-card">
+                <i class="fas fa-user-tie"></i>
+                <h3>Empleados</h3>
+                <p>Gestiona el personal de tu lavadero.</p>
+                <a href="{% url 'empleados' %}" class="btn btn-primary mt-3">
+                    <i class="fas fa-arrow-right"></i> Acceder
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Próximas Citas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Vehículo</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if citas %}
+                                    {% for cita in citas %}
+                                        <tr>
+                                            <td>{{ cita.vehiculo }}</td>
+                                            <td>{{ cita.vehiculo.cliente }}</td>
+                                            <td>{{ cita.fecha_hora|date:"d/m/Y H:i" }}</td>
+                                            <td>
+                                                {% if cita.estado == 'Completada' %}
+                                                    <span class="badge bg-success">{{ cita.estado }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning text-dark">{{ cita.estado }}</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">No hay citas programadas</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Servicios Destacados</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Servicio</th>
+                                    <th>Descripción</th>
+                                    <th>Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if servicios %}
+                                    {% for servicio in servicios %}
+                                        <tr>
+                                            <td>{{ servicio.nombre }}</td>
+                                            <td>{{ servicio.descripcion|truncatechars:50 }}</td>
+                                            <td>${{ servicio.precio }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">No hay servicios registrados</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

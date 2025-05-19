@@ -4,9 +4,339 @@
     Citas
 {% endblock %}
 
-
-
 {% block content %}
-    <h1>Citas</h1>
-    <p>Ver citas o agregar citas</p>
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1><i class="fas fa-calendar-alt"></i> Gestión de Citas</h1>
+            <p class="lead">Administra las citas de servicio de lavado</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nuevaCitaModal">
+                <i class="fas fa-plus"></i> Nueva Cita
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros de búsqueda -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="fecha" class="form-label">Fecha</label>
+                    <input type="date" class="form-control" id="fecha" name="fecha" value="{{ request.GET.fecha }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="estado" class="form-label">Estado</label>
+                    <select class="form-select" id="estado" name="estado">
+                        <option value="">Todos</option>
+                        <option value="Pendiente" {% if request.GET.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                        <option value="En proceso" {% if request.GET.estado == 'En proceso' %}selected{% endif %}>En proceso</option>
+                        <option value="Completada" {% if request.GET.estado == 'Completada' %}selected{% endif %}>Completada</option>
+                        <option value="Cancelada" {% if request.GET.estado == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="cliente" class="form-label">Cliente</label>
+                    <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Nombre del cliente" value="{{ request.GET.cliente }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de citas -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-list"></i> Lista de Citas</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Vehículo</th>
+                            <th>Servicio</th>
+                            <th>Fecha y Hora</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if citas %}
+                            {% for cita in citas %}
+                                <tr>
+                                    <td>{{ cita.id }}</td>
+                                    <td>{{ cita.vehiculo.cliente }}</td>
+                                    <td>{{ cita.vehiculo }} ({{ cita.vehiculo.placa }})</td>
+                                    <td>{{ cita.servicio }}</td>
+                                    <td>{{ cita.fecha_hora|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        {% if cita.estado == 'Completada' %}
+                                            <span class="badge bg-success">{{ cita.estado }}</span>
+                                        {% elif cita.estado == 'Pendiente' %}
+                                            <span class="badge bg-warning text-dark">{{ cita.estado }}</span>
+                                        {% elif cita.estado == 'En proceso' %}
+                                            <span class="badge bg-info">{{ cita.estado }}</span>
+                                        {% elif cita.estado == 'Cancelada' %}
+                                            <span class="badge bg-danger">{{ cita.estado }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editarCitaModal{{ cita.id }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <a href="{% url 'cita_detalle' cita.id %}" class="btn btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarCitaModal{{ cita.id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center">No hay citas registradas</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            {% if citas.has_other_pages %}
+                <nav aria-label="Paginación de citas">
+                    <ul class="pagination justify-content-center">
+                        {% if citas.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ citas.previous_page_number }}" aria-label="Anterior">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for i in citas.paginator.page_range %}
+                            {% if citas.number == i %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if citas.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ citas.next_page_number }}" aria-label="Siguiente">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal para Nueva Cita -->
+    <div class="modal fade" id="nuevaCitaModal" tabindex="-1" aria-labelledby="nuevaCitaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nuevaCitaModalLabel"><i class="fas fa-calendar-plus"></i> Agendar Nueva Cita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form method="post" action="{% url 'cita_crear' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="cliente" class="form-label">Cliente</label>
+                                <select class="form-select" id="cliente" name="cliente" required>
+                                    <option value="" selected disabled>Seleccione un cliente</option>
+                                    {% for cliente in clientes %}
+                                        <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellido }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vehiculo" class="form-label">Vehículo</label>
+                                <select class="form-select" id="vehiculo" name="vehiculo" required>
+                                    <option value="" selected disabled>Primero seleccione un cliente</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="servicio" class="form-label">Servicio</label>
+                                <select class="form-select" id="servicio" name="servicio" required>
+                                    <option value="" selected disabled>Seleccione un servicio</option>
+                                    {% for servicio in servicios %}
+                                        <option value="{{ servicio.id }}">{{ servicio.nombre }} - ${{ servicio.precio }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fecha_hora" class="form-label">Fecha y Hora</label>
+                                <input type="datetime-local" class="form-control" id="fecha_hora" name="fecha_hora" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notas" class="form-label">Notas adicionales</label>
+                            <textarea class="form-control" id="notas" name="notas" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cita</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales para Editar y Eliminar Citas (se generan dinámicamente para cada cita) -->
+    {% if citas %}
+        {% for cita in citas %}
+            <!-- Modal Editar -->
+            <div class="modal fade" id="editarCitaModal{{ cita.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-edit"></i> Editar Cita #{{ cita.id }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <form method="post" action="{% url 'cita_editar' cita.id %}">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="edit_vehiculo{{ cita.id }}" class="form-label">Vehículo</label>
+                                        <select class="form-select" id="edit_vehiculo{{ cita.id }}" name="vehiculo" required>
+                                            {% for vehiculo in vehiculos %}
+                                                <option value="{{ vehiculo.id }}" {% if vehiculo.id == cita.vehiculo.id %}selected{% endif %}>
+                                                    {{ vehiculo }} ({{ vehiculo.placa }})
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="edit_servicio{{ cita.id }}" class="form-label">Servicio</label>
+                                        <select class="form-select" id="edit_servicio{{ cita.id }}" name="servicio" required>
+                                            {% for servicio in servicios %}
+                                                <option value="{{ servicio.id }}" {% if servicio.id == cita.servicio.id %}selected{% endif %}>
+                                                    {{ servicio.nombre }} - ${{ servicio.precio }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="edit_fecha_hora{{ cita.id }}" class="form-label">Fecha y Hora</label>
+                                        <input type="datetime-local" class="form-control" id="edit_fecha_hora{{ cita.id }}" 
+                                               name="fecha_hora" value="{{ cita.fecha_hora|date:'Y-m-d\TH:i' }}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="edit_estado{{ cita.id }}" class="form-label">Estado</label>
+                                        <select class="form-select" id="edit_estado{{ cita.id }}" name="estado">
+                                            <option value="Pendiente" {% if cita.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                                            <option value="En proceso" {% if cita.estado == 'En proceso' %}selected{% endif %}>En proceso</option>
+                                            <option value="Completada" {% if cita.estado == 'Completada' %}selected{% endif %}>Completada</option>
+                                            <option value="Cancelada" {% if cita.estado == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit_notas{{ cita.id }}" class="form-label">Notas adicionales</label>
+                                    <textarea class="form-control" id="edit_notas{{ cita.id }}" name="notas" rows="3">{{ cita.notas }}</textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Eliminar -->
+            <div class="modal fade" id="eliminarCitaModal{{ cita.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-trash"></i> Eliminar Cita</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>¿Está seguro que desea eliminar la cita #{{ cita.id }}?</p>
+                            <p><strong>Cliente:</strong> {{ cita.vehiculo.cliente }}</p>
+                            <p><strong>Vehículo:</strong> {{ cita.vehiculo }}</p>
+                            <p><strong>Fecha:</strong> {{ cita.fecha_hora|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <form method="post" action="{% url 'cita_eliminar' cita.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Script para actualizar vehículos según cliente seleccionado -->
+    {% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const clienteSelect = document.getElementById('cliente');
+            const vehiculoSelect = document.getElementById('vehiculo');
+            
+            if (clienteSelect && vehiculoSelect) {
+                clienteSelect.addEventListener('change', function() {
+                    const clienteId = this.value;
+                    
+                    // Limpiar select de vehículos
+                    vehiculoSelect.innerHTML = '';
+                    
+                    if (clienteId) {
+                        // Hacer petición AJAX para obtener vehículos del cliente
+                        fetch(`/api/vehiculos-por-cliente/${clienteId}/`)
+                            .then(response => response.json())
+                            .then(data => {
+                                vehiculoSelect.innerHTML = '<option value="" selected disabled>Seleccione un vehículo</option>';
+                                
+                                data.forEach(vehiculo => {
+                                    const option = document.createElement('option');
+                                    option.value = vehiculo.id;
+                                    option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
+                                    vehiculoSelect.appendChild(option);
+                                });
+                            })
+                            .catch(error => console.error('Error:', error));
+                    } else {
+                        vehiculoSelect.innerHTML = '<option value="" selected disabled>Primero seleccione un cliente</option>';
+                    }
+                });
+            }
+        });
+    </script>
+    {% endblock %}
 {% endblock %}

@@ -1,0 +1,299 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+    Detalle de Cita #{{ cita.id }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1 class="detail-title">
+                    <i class="fas fa-calendar-check"></i> Detalle de Cita #{{ cita.id }}
+                </h1>
+                <p class="detail-subtitle">
+                    Fecha de creación: {{ cita.fecha_hora|date:"d/m/Y H:i" }}
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{% url 'citas' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a citas
+                </a>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editarCitaModal">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="detail-info mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-info-circle"></i> Información de la Cita</h3>
+                            <table class="table">
+                                <tr>
+                                    <th>Estado:</th>
+                                    <td>
+                                        {% if cita.estado == 'Completada' %}
+                                            <span class="badge bg-success">{{ cita.estado }}</span>
+                                        {% elif cita.estado == 'Pendiente' %}
+                                            <span class="badge bg-warning text-dark">{{ cita.estado }}</span>
+                                        {% elif cita.estado == 'En proceso' %}
+                                            <span class="badge bg-info">{{ cita.estado }}</span>
+                                        {% elif cita.estado == 'Cancelada' %}
+                                            <span class="badge bg-danger">{{ cita.estado }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha y hora:</th>
+                                    <td>{{ cita.fecha_hora|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Empleado asignado:</th>
+                                    <td>{{ cita.empleado }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-car"></i> Información del Vehículo</h3>
+                            <table class="table">
+                                <tr>
+                                    <th>Vehículo:</th>
+                                    <td>{{ cita.vehiculo }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Placa:</th>
+                                    <td>{{ cita.vehiculo.placa }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Color:</th>
+                                    <td>{{ cita.vehiculo.color }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Tipo:</th>
+                                    <td>{{ cita.vehiculo.tipo }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-user"></i> Información del Cliente</h3>
+                            <table class="table">
+                                <tr>
+                                    <th>Nombre:</th>
+                                    <td>{{ cita.vehiculo.cliente.nombre }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Cédula:</th>
+                                    <td>{{ cita.vehiculo.cliente.cedula }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Teléfono:</th>
+                                    <td>{{ cita.vehiculo.cliente.telefono }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Correo:</th>
+                                    <td>{{ cita.vehiculo.cliente.correo }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-list-check"></i> Servicios</h3>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Servicio</th>
+                                        <th>Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for servicio in cita.servicios.all %}
+                                        <tr>
+                                            <td>{{ servicio.nombre }}</td>
+                                            <td>${{ servicio.precio }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-primary">
+                                        <th>Total:</th>
+                                        <th>${{ cita.servicios.all|sum:'precio' }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <!-- Acciones y estado -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-tasks"></i> Acciones</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'cita_editar' cita.id %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Cambiar estado:</label>
+                                <select name="estado" id="estado" class="form-select">
+                                    <option value="Pendiente" {% if cita.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                                    <option value="En proceso" {% if cita.estado == 'En proceso' %}selected{% endif %}>En proceso</option>
+                                    <option value="Completada" {% if cita.estado == 'Completada' %}selected{% endif %}>Completada</option>
+                                    <option value="Cancelada" {% if cita.estado == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block w-100">
+                                <i class="fas fa-save"></i> Actualizar Estado
+                            </button>
+                        </form>
+                        <hr>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-info" onclick="window.print()">
+                                <i class="fas fa-print"></i> Imprimir Detalles
+                            </button>
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarCitaModal">
+                                <i class="fas fa-trash"></i> Eliminar Cita
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Historial -->
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-history"></i> Historial del Cliente</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Visitas anteriores del cliente:</p>
+                        <ul class="list-group">
+                            {% for visita in cita.vehiculo.cliente.vehiculo_set.cita_set.all|dictsortreversed:"fecha_hora"|slice:":5" %}
+                                {% if visita.id != cita.id %}
+                                    <li class="list-group-item">
+                                        <a href="{% url 'cita_detalle' visita.id %}">
+                                            {{ visita.fecha_hora|date:"d/m/Y" }} - {{ visita.vehiculo }}
+                                        </a>
+                                        <span class="badge bg-{% if visita.estado == 'Completada' %}success{% elif visita.estado == 'Pendiente' %}warning{% elif visita.estado == 'Cancelada' %}danger{% else %}info{% endif %} float-end">
+                                            {{ visita.estado }}
+                                        </span>
+                                    </li>
+                                {% endif %}
+                            {% empty %}
+                                <li class="list-group-item">No hay visitas anteriores</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Editar -->
+    <div class="modal fade" id="editarCitaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit"></i> Editar Cita #{{ cita.id }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <form method="post" action="{% url 'cita_editar' cita.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="edit_vehiculo" class="form-label">Vehículo</label>
+                                <select class="form-select" id="edit_vehiculo" name="vehiculo" required>
+                                    {% for vehiculo in cita.vehiculo.cliente.vehiculo_set.all %}
+                                        <option value="{{ vehiculo.id }}" {% if vehiculo.id == cita.vehiculo.id %}selected{% endif %}>
+                                            {{ vehiculo }} ({{ vehiculo.placa }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit_fecha_hora" class="form-label">Fecha y Hora</label>
+                                <input type="datetime-local" class="form-control" id="edit_fecha_hora" 
+                                       name="fecha_hora" value="{{ cita.fecha_hora|date:'Y-m-d\TH:i' }}" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="edit_estado" class="form-label">Estado</label>
+                                <select class="form-select" id="edit_estado" name="estado">
+                                    <option value="Pendiente" {% if cita.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                                    <option value="En proceso" {% if cita.estado == 'En proceso' %}selected{% endif %}>En proceso</option>
+                                    <option value="Completada" {% if cita.estado == 'Completada' %}selected{% endif %}>Completada</option>
+                                    <option value="Cancelada" {% if cita.estado == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit_empleado" class="form-label">Empleado</label>
+                                <select class="form-select" id="edit_empleado" name="empleado" required>
+                                    {% for empleado in empleados %}
+                                        <option value="{{ empleado.id }}" {% if empleado.id == cita.empleado.id %}selected{% endif %}>
+                                            {{ empleado.nombre }} ({{ empleado.puesto }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Servicios</label>
+                            <div class="row">
+                                {% for servicio in servicios %}
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="servicio" value="{{ servicio.id }}"
+                                            id="servicio{{ servicio.id }}" 
+                                            {% if servicio in cita.servicios.all %}checked{% endif %}>
+                                        <label class="form-check-label" for="servicio{{ servicio.id }}">
+                                            {{ servicio.nombre }} - ${{ servicio.precio }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Eliminar -->
+    <div class="modal fade" id="eliminarCitaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-trash"></i> Eliminar Cita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro que desea eliminar la cita #{{ cita.id }}?</p>
+                    <p><strong>Cliente:</strong> {{ cita.vehiculo.cliente.nombre }}</p>
+                    <p><strong>Vehículo:</strong> {{ cita.vehiculo }}</p>
+                    <p><strong>Fecha:</strong> {{ cita.fecha_hora|date:"d/m/Y H:i" }}</p>
+                    <div class="alert alert-danger">
+                        Esta acción no se puede deshacer.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form method="post" action="{% url 'cita_eliminar' cita.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
