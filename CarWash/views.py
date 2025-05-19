@@ -379,5 +379,13 @@ def vehiculo_eliminar(request, vehiculo_id):
 @csrf_exempt
 def vehiculos_por_cliente(request, cliente_id):
     vehiculos = Vehiculo.objects.filter(cliente_id=cliente_id)
-    data = list(vehiculos.values('id', 'marca', 'modelo', 'placa'))
+    data = [
+        {
+            'id': v.id,
+            'placa': v.placa,
+            'marca': v.marca,
+            'modelo': v.modelo,
+        }
+        for v in vehiculos
+    ]
     return JsonResponse(data, safe=False)
