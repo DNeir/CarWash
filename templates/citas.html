@@ -225,6 +225,17 @@
                             <div class="modal-body">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
+                                        <label for="edit_cliente{{ cita.id }}" class="form-label">Cliente</label>
+                                        <select class="form-select" id="edit_cliente{{ cita.id }}" name="cliente" required>
+                                            <option value="" disabled>Seleccione un cliente</option>
+                                            {% for cliente in clientes %}
+                                                <option value="{{ cliente.id }}" {% if cliente.id == cita.vehiculo.cliente.id %}selected{% endif %}>
+                                                    {{ cliente.nombre }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
                                         <label for="edit_vehiculo{{ cita.id }}" class="form-label">Vehículo</label>
                                         <select class="form-select" id="edit_vehiculo{{ cita.id }}" name="vehiculo" required>
                                             {% for vehiculo in vehiculos %}
@@ -234,6 +245,8 @@
                                             {% endfor %}
                                         </select>
                                     </div>
+                                </div>
+                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="edit_servicio{{ cita.id }}" class="form-label">Servicio</label>
                                         <select class="form-select" id="edit_servicio{{ cita.id }}" name="servicio" required>
@@ -244,13 +257,13 @@
                                             {% endfor %}
                                         </select>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="edit_fecha_hora{{ cita.id }}" class="form-label">Fecha y Hora</label>
                                         <input type="datetime-local" class="form-control" id="edit_fecha_hora{{ cita.id }}" 
                                                name="fecha_hora" value="{{ cita.fecha_hora|date:'Y-m-d\TH:i' }}" required>
                                     </div>
+                                </div>
+                                <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="edit_estado{{ cita.id }}" class="form-label">Estado</label>
                                         <select class="form-select" id="edit_estado{{ cita.id }}" name="estado">
@@ -260,10 +273,10 @@
                                             <option value="Cancelada" {% if cita.estado == 'Cancelada' %}selected{% endif %}>Cancelada</option>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="edit_notas{{ cita.id }}" class="form-label">Notas adicionales</label>
-                                    <textarea class="form-control" id="edit_notas{{ cita.id }}" name="notas" rows="3">{{ cita.notas }}</textarea>
+                                    <div class="col-md-6">
+                                        <label for="edit_notas{{ cita.id }}" class="form-label">Notas adicionales</label>
+                                        <textarea class="form-control" id="edit_notas{{ cita.id }}" name="notas" rows="3">{{ cita.notas }}</textarea>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -306,6 +319,7 @@
     {% block extra_js %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Seleccionar elementos del DOM para el formulario de nueva cita
             const clienteSelect = document.getElementById('cliente');
             const vehiculoSelect = document.getElementById('vehiculo');
             
@@ -319,23 +333,68 @@
                     if (clienteId) {
                         // Hacer petición AJAX para obtener vehículos del cliente
                         fetch(`/api/vehiculos-por-cliente/${clienteId}/`)
-                            .then(response => response.json())
-                            .then(data => {
-                                vehiculoSelect.innerHTML = '<option value="" selected disabled>Seleccione un vehículo</option>';
-                                
-                                data.forEach(vehiculo => {
-                                    const option = document.createElement('option');
-                                    option.value = vehiculo.id;
-                                    option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
-                                    vehiculoSelect.appendChild(option);
-                                });
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Error en la respuesta del servidor');
+                                }
+                                return response.json();
                             })
-                            .catch(error => console.error('Error:', error));
+                            .then(data => {
+                                // Verificar si hay datos
+                                if (data && data.length > 0) {
+                                    vehiculoSelect.innerHTML = '<option value="" selected disabled>Seleccione un vehículo</option>';
+                                    
+                                    data.forEach(vehiculo => {
+                                        const option = document.createElement('option');
+                                        option.value = vehiculo.id;
+                                        option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
+                                        vehiculoSelect.appendChild(option);
+                                    });
+                                } else {
+                                    vehiculoSelect.innerHTML = '<option value="" selected disabled>Este cliente no tiene vehículos registrados</option>';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                vehiculoSelect.innerHTML = '<option value="" selected disabled>Error al cargar vehículos</option>';
+                            });
                     } else {
                         vehiculoSelect.innerHTML = '<option value="" selected disabled>Primero seleccione un cliente</option>';
                     }
                 });
             }
+
+            // También inicializar el evento para los múltiples modales de edición
+            {% if citas %}
+                {% for cita in citas %}
+                    const clienteEditSelect{{ cita.id }} = document.getElementById('edit_cliente{{ cita.id }}');
+                    const vehiculoEditSelect{{ cita.id }} = document.getElementById('edit_vehiculo{{ cita.id }}');
+                    
+                    if (clienteEditSelect{{ cita.id }} && vehiculoEditSelect{{ cita.id }}) {
+                        clienteEditSelect{{ cita.id }}.addEventListener('change', function() {
+                            const clienteId = this.value;
+                            
+                            if (clienteId) {
+                                fetch(`/api/vehiculos-por-cliente/${clienteId}/`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        vehiculoEditSelect{{ cita.id }}.innerHTML = '<option value="" selected disabled>Seleccione un vehículo</option>';
+                                        
+                                        data.forEach(vehiculo => {
+                                            const option = document.createElement('option');
+                                            option.value = vehiculo.id;
+                                            option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
+                                            vehiculoEditSelect{{ cita.id }}.appendChild(option);
+                                        });
+                                    })
+                                    .catch(error => console.error('Error:', error));
+                            } else {
+                                vehiculoEditSelect{{ cita.id }}.innerHTML = '<option value="" selected disabled>Primero seleccione un cliente</option>';
+                            }
+                        });
+                    }
+                {% endfor %}
+            {% endif %}
         });
     </script>
     {% endblock %}

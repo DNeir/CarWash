@@ -112,13 +112,11 @@ def cita_editar(request, cita_id):
         fecha_hora = request.POST.get('fecha_hora')
         estado = request.POST.get('estado')
         notas = request.POST.get('notas', '')
-        empleado_id = request.POST.get('empleado', cita.empleado.id)
         
         try:
-            # Actualizar la cita
-            cita.vehiculo = Vehiculo.objects.get(id=vehiculo_id)
-            if empleado_id:
-                cita.empleado = Empleado.objects.get(id=empleado_id)
+            # Actualizar la cita con el vehículo seleccionado
+            vehiculo = Vehiculo.objects.get(id=vehiculo_id)
+            cita.vehiculo = vehiculo
             cita.fecha_hora = fecha_hora
             cita.estado = estado
             cita.notas = notas
