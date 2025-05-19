@@ -74,7 +74,11 @@
                                     <td>{{ cita.id }}</td>
                                     <td>{{ cita.vehiculo.cliente }}</td>
                                     <td>{{ cita.vehiculo }} ({{ cita.vehiculo.placa }})</td>
-                                    <td>{{ cita.servicio }}</td>
+                                    <td>
+                                        {% for servicio in cita.servicios.all %}
+                                            {{ servicio.nombre }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </td>
                                     <td>{{ cita.fecha_hora|date:"d/m/Y H:i" }}</td>
                                     <td>
                                         {% if cita.estado == 'Completada' %}
@@ -183,12 +187,13 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="servicio" class="form-label">Servicio</label>
-                                <select class="form-select" id="servicio" name="servicio" required>
-                                    <option value="" selected disabled>Seleccione un servicio</option>
+                                <select class="form-select" id="servicio" name="servicio" required multiple>
+                                    <option value="" disabled>Seleccione uno o más servicios</option>
                                     {% for servicio in servicios %}
                                         <option value="{{ servicio.id }}">{{ servicio.nombre }} - ${{ servicio.precio }}</option>
                                     {% endfor %}
                                 </select>
+                                <small class="form-text text-muted">Mantenga presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples servicios.</small>
                             </div>
                             <div class="col-md-6">
                                 <label for="fecha_hora" class="form-label">Fecha y Hora</label>
@@ -249,13 +254,14 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="edit_servicio{{ cita.id }}" class="form-label">Servicio</label>
-                                        <select class="form-select" id="edit_servicio{{ cita.id }}" name="servicio" required>
+                                        <select class="form-select" id="edit_servicio{{ cita.id }}" name="servicio" required multiple>
                                             {% for servicio in servicios %}
-                                                <option value="{{ servicio.id }}" {% if servicio.id == cita.servicio.id %}selected{% endif %}>
+                                                <option value="{{ servicio.id }}" {% if servicio in cita.servicios.all %}selected{% endif %}>
                                                     {{ servicio.nombre }} - ${{ servicio.precio }}
                                                 </option>
                                             {% endfor %}
                                         </select>
+                                        <small class="form-text text-muted">Mantenga presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples servicios.</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="edit_fecha_hora{{ cita.id }}" class="form-label">Fecha y Hora</label>
