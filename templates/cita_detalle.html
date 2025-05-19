@@ -7,8 +7,10 @@
 {% block styles %}
     <style>
         @media print {
-            .no-print {
+            .no-print, .no-print *,
+            .d-print-none, .d-print-none * {
                 display: none !important;
+                visibility: hidden !important;
             }
             
             .card {
@@ -21,7 +23,14 @@
                 border-bottom: 1px solid #dee2e6 !important;
             }
             
-            .btn, button, .modal, .form-select, textarea, .d-grid {
+            .btn, button, .modal, .form-select, textarea, .d-grid, 
+            input[type="button"], input[type="submit"], .dropdown-menu {
+                display: none !important;
+                visibility: hidden !important;
+            }
+            
+            /* Ocultar explícitamente la tarjeta de acciones */
+            div:has(> h5:contains("Acciones")) {
                 display: none !important;
             }
             
@@ -41,12 +50,57 @@
             table {
                 page-break-inside: avoid;
             }
+            
+            /* Título más limpio para impresión */
+            .detail-title {
+                font-size: 18pt;
+                margin-bottom: 10pt;
+            }
+            
+            /* Espaciado adicional para información */
+            .detail-info {
+                margin-bottom: 15pt;
+            }
+            
+            /* Color de fondo y badges para impresión */
+            .badge {
+                background-color: #f8f9fa !important;
+                color: #000 !important;
+                border: 1px solid #dee2e6 !important;
+            }
+            
+            /* Márgenes para impresión */
+            @page {
+                margin: 1cm;
+            }
+        }
+        
+        /* Clase específica para elementos que no se deben imprimir */
+        .print-hidden {
+            display: inherit;
+        }
+        
+        @media print {
+            .print-hidden {
+                display: none !important;
+            }
         }
     </style>
 {% endblock %}
 
 {% block content %}
     <div class="container">
+        <!-- Encabezado para impresión -->
+        <div class="d-none d-print-block mb-4">
+            <div class="text-center">
+                <h2 class="mb-0">CARWASH - Servicio de Lavado</h2>
+                <p class="mb-0">Dirección: Av. Principal #123, Riohacha</p>
+                <p class="mb-0">Teléfono: (123) 456-7890</p>
+                <p>Email: info@carwash.com</p>
+                <h3 class="mt-4 mb-3 border-bottom pb-2">COMPROBANTE DE SERVICIO</h3>
+            </div>
+        </div>
+        
         <div class="row mb-4">
             <div class="col-md-8">
                 <h1 class="detail-title">
@@ -173,7 +227,7 @@
             
             <div class="col-lg-4">
                 <!-- Acciones y estado -->
-                <div class="card mb-4 no-print">
+                <div class="card mb-4 no-print d-print-none">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0"><i class="fas fa-tasks"></i> Acciones</h5>
                     </div>
@@ -224,7 +278,7 @@
                 </div>
                 
                 <!-- Historial -->
-                <div class="card">
+                <div class="card print-hidden">
                     <div class="card-header bg-secondary text-white">
                         <h5 class="mb-0"><i class="fas fa-history"></i> Historial del Cliente</h5>
                     </div>
@@ -249,6 +303,28 @@
                         </ul>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Pie de página para impresión -->
+        <div class="d-none d-print-block mt-5">
+            <div class="row mt-5 pt-5">
+                <div class="col-6 text-center">
+                    <div class="border-top pt-2">
+                        Firma del Empleado
+                    </div>
+                </div>
+                <div class="col-6 text-center">
+                    <div class="border-top pt-2">
+                        Firma del Cliente
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5 pt-3">
+                <p><small>Gracias por su preferencia.</small></p>
+                <p><small>Este documento es un comprobante de servicio. Por favor, consérvelo para cualquier reclamación.</small></p>
+                <p><small>CARWASH &copy; {% now "Y" %} - Todos los derechos reservados</small></p>
             </div>
         </div>
     </div>
@@ -356,4 +432,15 @@
             </div>
         </div>
     </div>
+    
+    <!-- Script para control de impresión -->
+    <script>
+        window.addEventListener('beforeprint', function() {
+            // Ocultar explícitamente elementos que no deben imprimirse
+            var elementsToHide = document.querySelectorAll('.no-print, .d-print-none, .print-hidden');
+            elementsToHide.forEach(function(element) {
+                element.style.display = 'none';
+            });
+        });
+    </script>
 {% endblock %} 
