@@ -8,8 +8,8 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col-md-8">
-            <h2><i class="fas fa-user-tie"></i> Registro de Empleados</h2>
-            <p class="lead">Agrega nuevos empleados al sistema</p>
+            <h2 style="color: white !important;"><i class="fas fa-user-tie" style="color: #5bc0be !important;"></i> Registro de Empleados</h2>
+            <p class="lead" style="color: white !important;">Agrega nuevos empleados al sistema</p>
         </div>
     </div>
     <div class="card mb-4">
@@ -17,16 +17,16 @@
             <form method="post" class="row g-3">
                 {% csrf_token %}
                 <div class="col-md-4">
-                    <label for="nombre" class="form-label">Nombre completo</label>
-                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    <label for="nombre" class="form-label" style="color: #333333 !important; font-weight: 600;">Nombre completo</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required style="color: #333333 !important;">
                 </div>
                 <div class="col-md-4">
-                    <label for="telefono" class="form-label">Teléfono</label>
-                    <input type="text" class="form-control" id="telefono" name="telefono" required>
+                    <label for="telefono" class="form-label" style="color: #333333 !important; font-weight: 600;">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono" required style="color: #333333 !important;">
                 </div>
                 <div class="col-md-4">
-                    <label for="puesto" class="form-label">Puesto/Cargo</label>
-                    <input type="text" class="form-control" id="puesto" name="puesto" required>
+                    <label for="puesto" class="form-label" style="color: #333333 !important; font-weight: 600;">Puesto/Cargo</label>
+                    <input type="text" class="form-control" id="puesto" name="puesto" required style="color: #333333 !important;">
                 </div>
                 <div class="col-12 text-end">
                     <button type="submit" class="btn btn-primary">

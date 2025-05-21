@@ -25,8 +25,8 @@
             <div class="tab-pane fade show active" id="clientes" role="tabpanel" aria-labelledby="clientes-tab">
                 <div class="row mb-4">
                     <div class="col-md-8">
-                        <h2><i class="fas fa-users"></i> Gestión de Clientes</h2>
-                        <p class="lead">Administra la información de tus clientes</p>
+                        <h2 style="color: white !important;"><i class="fas fa-users" style="color: #5bc0be !important;"></i> Gestión de Clientes</h2>
+                        <p class="lead" style="color: white !important;">Administra la información de tus clientes</p>
                     </div>
                     <div class="col-md-4 text-end">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nuevoClienteModal">
@@ -40,12 +40,12 @@
                     <div class="card-body">
                         <form method="get" class="row g-3">
                             <div class="col-md-4">
-                                <label for="nombre_cliente" class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" value="{{ request.GET.nombre_cliente }}">
+                                <label for="nombre_cliente" class="form-label" style="color: #333333 !important; font-weight: 600;">Nombre</label>
+                                <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" value="{{ request.GET.nombre_cliente }}" style="color: #333333 !important;">
                             </div>
                             <div class="col-md-4">
-                                <label for="cedula" class="form-label">Cédula</label>
-                                <input type="text" class="form-control" id="cedula" name="cedula" value="{{ request.GET.cedula }}">
+                                <label for="cedula" class="form-label" style="color: #333333 !important; font-weight: 600;">Cédula</label>
+                                <input type="text" class="form-control" id="cedula" name="cedula" value="{{ request.GET.cedula }}" style="color: #333333 !important;">
                             </div>
                             <div class="col-md-4 d-flex align-items-end">
                                 <button type="submit" class="btn btn-primary w-100">
@@ -155,8 +155,8 @@
             <div class="tab-pane fade" id="vehiculos" role="tabpanel" aria-labelledby="vehiculos-tab">
                 <div class="row mb-4">
                     <div class="col-md-8">
-                        <h2><i class="fas fa-car"></i> Gestión de Vehículos</h2>
-                        <p class="lead">Administra los vehículos de tus clientes</p>
+                        <h2 style="color: white !important;"><i class="fas fa-car" style="color: #5bc0be !important;"></i> Gestión de Vehículos</h2>
+                        <p class="lead" style="color: white !important;">Administra los vehículos de tus clientes</p>
                     </div>
                 </div>
 
@@ -165,16 +165,16 @@
                     <div class="card-body">
                         <form method="get" class="row g-3">
                             <div class="col-md-3">
-                                <label for="placa" class="form-label">Placa</label>
-                                <input type="text" class="form-control" id="placa" name="placa" value="{{ request.GET.placa }}">
+                                <label for="placa" class="form-label" style="color: #333333 !important; font-weight: 600;">Placa</label>
+                                <input type="text" class="form-control" id="placa" name="placa" value="{{ request.GET.placa }}" style="color: #333333 !important;">
                             </div>
                             <div class="col-md-3">
-                                <label for="marca" class="form-label">Marca</label>
-                                <input type="text" class="form-control" id="marca" name="marca" value="{{ request.GET.marca }}">
+                                <label for="marca" class="form-label" style="color: #333333 !important; font-weight: 600;">Marca</label>
+                                <input type="text" class="form-control" id="marca" name="marca" value="{{ request.GET.marca }}" style="color: #333333 !important;">
                             </div>
                             <div class="col-md-3">
-                                <label for="cliente_nombre" class="form-label">Cliente</label>
-                                <input type="text" class="form-control" id="cliente_nombre" name="cliente_nombre" value="{{ request.GET.cliente_nombre }}">
+                                <label for="cliente_nombre" class="form-label" style="color: #333333 !important; font-weight: 600;">Cliente</label>
+                                <input type="text" class="form-control" id="cliente_nombre" name="cliente_nombre" value="{{ request.GET.cliente_nombre }}" style="color: #333333 !important;">
                             </div>
                             <div class="col-md-3 d-flex align-items-end">
                                 <button type="submit" class="btn btn-primary w-100">

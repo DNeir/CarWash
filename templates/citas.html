@@ -279,17 +279,17 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="cliente_cita" class="form-label" style="color: #333333 !important; font-weight: 600;">Cliente</label>
-                                <select class="form-select" id="cliente_cita" name="cliente" required style="color: #333333 !important;">
-                                    <option value="" selected disabled>Seleccione un cliente</option>
+                                <select class="form-select" id="cliente_cita" name="cliente" required style="color: #333333 !important; background-color: white !important;">
+                                    <option value="" selected disabled style="background-color: white !important; color: #333333 !important;">Seleccione un cliente</option>
                                     {% for cliente in clientes %}
-                                        <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellido }}</option>
+                                        <option value="{{ cliente.id }}" style="background-color: white !important; color: #333333 !important;">{{ cliente.nombre }} {{ cliente.apellido }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label for="vehiculo_cita" class="form-label" style="color: #333333 !important; font-weight: 600;">Vehículo</label>
-                                <select class="form-select" id="vehiculo_cita" name="vehiculo" required style="color: #333333 !important;">
-                                    <option value="" selected disabled>Primero seleccione un cliente</option>
+                                <select class="form-select" id="vehiculo_cita" name="vehiculo" required style="color: #333333 !important; background-color: white !important;">
+                                    <option value="" selected disabled style="background-color: white !important; color: #333333 !important;">Primero seleccione un cliente</option>
                                 </select>
                             </div>
                         </div>
@@ -340,10 +340,10 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label for="edit_cliente{{ cita.id }}" class="form-label" style="color: #333333 !important; font-weight: 600;">Cliente</label>
-                                        <select class="form-select" id="edit_cliente{{ cita.id }}" name="cliente" required style="color: #333333 !important;">
-                                            <option value="" disabled>Seleccione un cliente</option>
+                                        <select class="form-select" id="edit_cliente{{ cita.id }}" name="cliente" required style="color: #333333 !important; background-color: white !important;">
+                                            <option value="" disabled style="background-color: white !important; color: #333333 !important;">Seleccione un cliente</option>
                                             {% for cliente in clientes %}
-                                                <option value="{{ cliente.id }}" {% if cliente.id == cita.vehiculo.cliente.id %}selected{% endif %}>
+                                                <option value="{{ cliente.id }}" {% if cliente.id == cita.vehiculo.cliente.id %}selected{% endif %} style="background-color: white !important; color: #333333 !important;">
                                                     {{ cliente.nombre }}
                                                 </option>
                                             {% endfor %}
@@ -351,9 +351,9 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="edit_vehiculo{{ cita.id }}" class="form-label" style="color: #333333 !important; font-weight: 600;">Vehículo</label>
-                                        <select class="form-select" id="edit_vehiculo{{ cita.id }}" name="vehiculo" required style="color: #333333 !important;">
+                                        <select class="form-select" id="edit_vehiculo{{ cita.id }}" name="vehiculo" required style="color: #333333 !important; background-color: white !important;">
                                             {% for vehiculo in vehiculos %}
-                                                <option value="{{ vehiculo.id }}" {% if vehiculo.id == cita.vehiculo.id %}selected{% endif %}>
+                                                <option value="{{ vehiculo.id }}" {% if vehiculo.id == cita.vehiculo.id %}selected{% endif %} style="background-color: white !important; color: #333333 !important;">
                                                     {{ vehiculo }} ({{ vehiculo.placa }})
                                                 </option>
                                             {% endfor %}
