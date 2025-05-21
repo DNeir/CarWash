@@ -680,3 +680,49 @@ h1, h2, h3, h4, h5, h6 {
 .border-accent {
     border-color: var(--accent-color) !important;
 }
+
+/* Ajustes para la página de citas */
+.row h1, .row .lead {
+    color: var(--text-primary) !important;
+}
+
+.row h1 i.fas {
+    color: var(--accent-color) !important;
+}
+
+/* Etiquetas en formularios de búsqueda con fondo claro */
+.card .card-body .form-label {
+    color: #333333 !important;
+    font-weight: 600;
+}
+
+/* Etiquetas en modales */
+.modal-body .form-label {
+    color: #333333 !important;
+    font-weight: 600;
+}
+
+.modal-content .form-text {
+    color: #666666 !important;
+}
+
+/* Ajuste adicional para los inputs en formularios */
+.form-control, .form-select {
+    color: #333333 !important;
+}
+
+/* Cuando están dentro de un card con fondo claro */
+.card .card-body .form-control, 
+.card .card-body .form-select {
+    background-color: #ffffff;
+    border-color: #cccccc;
+    color: #333333 !important;
+}
+
+/* Cuando están dentro de un modal */
+.modal-body .form-control, 
+.modal-body .form-select {
+    background-color: #ffffff;
+    border-color: #cccccc;
+    color: #333333 !important;
+}

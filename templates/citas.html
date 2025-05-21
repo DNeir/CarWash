@@ -4,11 +4,120 @@
     Citas
 {% endblock %}
 
+{% block head_extra %}
+<style>
+    /* Estilos para mejorar la selección múltiple */
+    select[multiple] {
+        background-color: #ffffff !important;
+    }
+    
+    select[multiple] option {
+        padding: 8px 10px;
+        background-color: #ffffff !important;
+        color: #333333 !important;
+        border-bottom: 1px solid #eee;
+    }
+    
+    select[multiple] option:checked,
+    select[multiple] option:selected {
+        background-color: #4a90e2 !important;
+        color: #ffffff !important;
+        font-weight: bold;
+    }
+    
+    select[multiple] option:hover {
+        background-color: #e8f1fd !important;
+    }
+    
+    /* Solución específica para Firefox */
+    @-moz-document url-prefix() {
+        select[multiple] option:checked {
+            box-shadow: 0 0 0 30px #4a90e2 inset;
+            color: #ffffff !important;
+        }
+    }
+    
+    /* Solución específica para Webkit */
+    @media screen and (-webkit-min-device-pixel-ratio:0) {
+        select[multiple] option:checked {
+            background-color: #4a90e2 !important;
+            color: #ffffff !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Cargar vehículos por cliente
+    document.addEventListener('DOMContentLoaded', function() {
+        // Abrir el modal automáticamente si se recibe el parámetro open_modal=true
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('open_modal') === 'true') {
+            var nuevaCitaModal = new bootstrap.Modal(document.getElementById('nuevaCitaModal'));
+            nuevaCitaModal.show();
+        }
+
+        // Estilizar las opciones seleccionadas en el select múltiple
+        const servicioSelect = document.getElementById('servicio');
+        if (servicioSelect) {
+            // Aplicar estilos iniciales
+            styleSelectedOptions(servicioSelect);
+            
+            // Aplicar estilos cuando cambia la selección
+            servicioSelect.addEventListener('change', function() {
+                styleSelectedOptions(this);
+            });
+        }
+        
+        function styleSelectedOptions(selectElement) {
+            const options = selectElement.options;
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].selected) {
+                    options[i].style.backgroundColor = '#4a90e2';
+                    options[i].style.color = '#ffffff';
+                    options[i].style.fontWeight = 'bold';
+                } else {
+                    options[i].style.backgroundColor = '#ffffff';
+                    options[i].style.color = '#333333';
+                    options[i].style.fontWeight = 'normal';
+                }
+            }
+        }
+
+        // Resto del código JavaScript existente...
+        var clienteSelect = document.getElementById('cliente_cita');
+        var vehiculoSelect = document.getElementById('vehiculo_cita');
+        
+        if (clienteSelect) {
+            clienteSelect.addEventListener('change', function() {
+                var clienteId = this.value;
+                if (clienteId) {
+                    fetch(`/api/vehiculos-por-cliente/${clienteId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            vehiculoSelect.innerHTML = '<option value="" selected disabled>Seleccione un vehículo</option>';
+                            data.forEach(function(vehiculo) {
+                                var option = document.createElement('option');
+                                option.value = vehiculo.id;
+                                option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
+                                vehiculoSelect.appendChild(option);
+                            });
+                        });
+                } else {
+                    vehiculoSelect.innerHTML = '<option value="" selected disabled>Primero seleccione un cliente</option>';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+
 {% block content %}
     <div class="row mb-4">
         <div class="col-md-8">
-            <h1><i class="fas fa-calendar-alt"></i> Gestión de Citas</h1>
-            <p class="lead">Administra las citas de servicio de lavado</p>
+            <h1 style="color: white !important;"><i class="fas fa-calendar-alt" style="color: #5bc0be !important;"></i> Gestión de Citas</h1>
+            <p class="lead" style="color: white !important;">Administra las citas de servicio de lavado</p>
         </div>
         <div class="col-md-4 text-end">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nuevaCitaModal">
@@ -22,12 +131,12 @@
         <div class="card-body">
             <form method="get" class="row g-3">
                 <div class="col-md-3">
-                    <label for="fecha" class="form-label">Fecha</label>
-                    <input type="date" class="form-control" id="fecha" name="fecha" value="{{ request.GET.fecha }}">
+                    <label for="fecha" class="form-label" style="color: #333333 !important; font-weight: 600;">Fecha</label>
+                    <input type="date" class="form-control" id="fecha" name="fecha" value="{{ request.GET.fecha }}" style="color: #333333 !important;">
                 </div>
                 <div class="col-md-3">
-                    <label for="estado" class="form-label">Estado</label>
-                    <select class="form-select" id="estado" name="estado">
+                    <label for="estado" class="form-label" style="color: #333333 !important; font-weight: 600;">Estado</label>
+                    <select class="form-select" id="estado" name="estado" style="color: #333333 !important;">
                         <option value="">Todos</option>
                         <option value="Pendiente" {% if request.GET.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
                         <option value="En proceso" {% if request.GET.estado == 'En proceso' %}selected{% endif %}>En proceso</option>
@@ -36,8 +145,8 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="cliente" class="form-label">Cliente</label>
-                    <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Nombre del cliente" value="{{ request.GET.cliente }}">
+                    <label for="cliente" class="form-label" style="color: #333333 !important; font-weight: 600;">Cliente</label>
+                    <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Nombre del cliente" value="{{ request.GET.cliente }}" style="color: #333333 !important;">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">
@@ -169,8 +278,8 @@
                     <div class="modal-body">
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="cliente_cita" class="form-label">Cliente</label>
-                                <select class="form-select" id="cliente_cita" name="cliente" required>
+                                <label for="cliente_cita" class="form-label" style="color: #333333 !important; font-weight: 600;">Cliente</label>
+                                <select class="form-select" id="cliente_cita" name="cliente" required style="color: #333333 !important;">
                                     <option value="" selected disabled>Seleccione un cliente</option>
                                     {% for cliente in clientes %}
                                         <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellido }}</option>
@@ -178,31 +287,31 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="vehiculo_cita" class="form-label">Vehículo</label>
-                                <select class="form-select" id="vehiculo_cita" name="vehiculo" required>
+                                <label for="vehiculo_cita" class="form-label" style="color: #333333 !important; font-weight: 600;">Vehículo</label>
+                                <select class="form-select" id="vehiculo_cita" name="vehiculo" required style="color: #333333 !important;">
                                     <option value="" selected disabled>Primero seleccione un cliente</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="servicio" class="form-label">Servicio</label>
-                                <select class="form-select" id="servicio" name="servicio" required multiple>
+                                <label for="servicio" class="form-label" style="color: #333333 !important; font-weight: 600;">Servicio</label>
+                                <select class="form-select" id="servicio" name="servicio" required multiple style="color: #333333 !important; background-color: #ffffff !important; min-height: 150px; border: 1px solid #cccccc;">
                                     <option value="" disabled>Seleccione uno o más servicios</option>
                                     {% for servicio in servicios %}
-                                        <option value="{{ servicio.id }}">{{ servicio.nombre }} - ${{ servicio.precio }}</option>
+                                        <option value="{{ servicio.id }}" style="padding: 8px; border-bottom: 1px solid #eee;">{{ servicio.nombre }} - ${{ servicio.precio }}</option>
                                     {% endfor %}
                                 </select>
-                                <small class="form-text text-muted">Mantenga presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples servicios.</small>
+                                <small class="form-text" style="color: #666666 !important;">Mantenga presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples servicios.</small>
                             </div>
                             <div class="col-md-6">
-                                <label for="fecha_hora" class="form-label">Fecha y Hora</label>
-                                <input type="datetime-local" class="form-control" id="fecha_hora" name="fecha_hora" required>
+                                <label for="fecha_hora" class="form-label" style="color: #333333 !important; font-weight: 600;">Fecha y Hora</label>
+                                <input type="datetime-local" class="form-control" id="fecha_hora" name="fecha_hora" required style="color: #333333 !important;">
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="notas" class="form-label">Notas adicionales</label>
-                            <textarea class="form-control" id="notas" name="notas" rows="3"></textarea>
+                            <label for="notas" class="form-label" style="color: #333333 !important; font-weight: 600;">Notas adicionales</label>
+                            <textarea class="form-control" id="notas" name="notas" rows="3" style="color: #333333 !important;"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -230,8 +339,8 @@
                             <div class="modal-body">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="edit_cliente{{ cita.id }}" class="form-label">Cliente</label>
-                                        <select class="form-select" id="edit_cliente{{ cita.id }}" name="cliente" required>
+                                        <label for="edit_cliente{{ cita.id }}" class="form-label" style="color: #333333 !important; font-weight: 600;">Cliente</label>
+                                        <select class="form-select" id="edit_cliente{{ cita.id }}" name="cliente" required style="color: #333333 !important;">
                                             <option value="" disabled>Seleccione un cliente</option>
                                             {% for cliente in clientes %}
                                                 <option value="{{ cliente.id }}" {% if cliente.id == cita.vehiculo.cliente.id %}selected{% endif %}>
@@ -241,8 +350,8 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="edit_vehiculo{{ cita.id }}" class="form-label">Vehículo</label>
-                                        <select class="form-select" id="edit_vehiculo{{ cita.id }}" name="vehiculo" required>
+                                        <label for="edit_vehiculo{{ cita.id }}" class="form-label" style="color: #333333 !important; font-weight: 600;">Vehículo</label>
+                                        <select class="form-select" id="edit_vehiculo{{ cita.id }}" name="vehiculo" required style="color: #333333 !important;">
                                             {% for vehiculo in vehiculos %}
                                                 <option value="{{ vehiculo.id }}" {% if vehiculo.id == cita.vehiculo.id %}selected{% endif %}>
                                                     {{ vehiculo }} ({{ vehiculo.placa }})
@@ -253,26 +362,26 @@
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="edit_servicio{{ cita.id }}" class="form-label">Servicio</label>
-                                        <select class="form-select" id="edit_servicio{{ cita.id }}" name="servicio" required multiple>
+                                        <label for="edit_servicio{{ cita.id }}" class="form-label" style="color: #333333 !important; font-weight: 600;">Servicio</label>
+                                        <select class="form-select" id="edit_servicio{{ cita.id }}" name="servicio" required multiple style="color: #333333 !important; background-color: #ffffff !important; min-height: 150px; border: 1px solid #cccccc;">
                                             {% for servicio in servicios %}
-                                                <option value="{{ servicio.id }}" {% if servicio in cita.servicios.all %}selected{% endif %}>
+                                                <option value="{{ servicio.id }}" {% if servicio in cita.servicios.all %}selected{% endif %} style="padding: 8px; border-bottom: 1px solid #eee;">
                                                     {{ servicio.nombre }} - ${{ servicio.precio }}
                                                 </option>
                                             {% endfor %}
                                         </select>
-                                        <small class="form-text text-muted">Mantenga presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples servicios.</small>
+                                        <small class="form-text" style="color: #666666 !important;">Mantenga presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples servicios.</small>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="edit_fecha_hora{{ cita.id }}" class="form-label">Fecha y Hora</label>
+                                        <label for="edit_fecha_hora{{ cita.id }}" class="form-label" style="color: #333333 !important; font-weight: 600;">Fecha y Hora</label>
                                         <input type="datetime-local" class="form-control" id="edit_fecha_hora{{ cita.id }}" 
-                                               name="fecha_hora" value="{{ cita.fecha_hora|date:'Y-m-d\TH:i' }}" required>
+                                               name="fecha_hora" value="{{ cita.fecha_hora|date:'Y-m-d\TH:i' }}" required style="color: #333333 !important;">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="edit_estado{{ cita.id }}" class="form-label">Estado</label>
-                                        <select class="form-select" id="edit_estado{{ cita.id }}" name="estado">
+                                        <label for="edit_estado{{ cita.id }}" class="form-label" style="color: #333333 !important; font-weight: 600;">Estado</label>
+                                        <select class="form-select" id="edit_estado{{ cita.id }}" name="estado" style="color: #333333 !important;">
                                             <option value="Pendiente" {% if cita.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
                                             <option value="En proceso" {% if cita.estado == 'En proceso' %}selected{% endif %}>En proceso</option>
                                             <option value="Completada" {% if cita.estado == 'Completada' %}selected{% endif %}>Completada</option>
@@ -280,8 +389,8 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="edit_notas{{ cita.id }}" class="form-label">Notas adicionales</label>
-                                        <textarea class="form-control" id="edit_notas{{ cita.id }}" name="notas" rows="3">{{ cita.notas }}</textarea>
+                                        <label for="edit_notas{{ cita.id }}" class="form-label" style="color: #333333 !important; font-weight: 600;">Notas adicionales</label>
+                                        <textarea class="form-control" id="edit_notas{{ cita.id }}" name="notas" rows="3" style="color: #333333 !important;">{{ cita.notas }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -320,127 +429,4 @@
             </div>
         {% endfor %}
     {% endif %}
-
-    <!-- Script para actualizar vehículos según cliente seleccionado -->
-    {% block extra_js %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Seleccionar elementos del DOM para el formulario de nueva cita
-            const clienteSelect = document.getElementById('cliente_cita');
-            const vehiculoSelect = document.getElementById('vehiculo_cita');
-            
-            if (clienteSelect && vehiculoSelect) {
-                clienteSelect.addEventListener('change', function() {
-                    const clienteId = this.value;
-                    
-                    // Limpiar select de vehículos
-                    vehiculoSelect.innerHTML = '';
-                    
-                    if (clienteId) {
-                        // Hacer petición AJAX para obtener vehículos del cliente
-                        fetch(`/api/vehiculos-por-cliente/${clienteId}/`)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Error en la respuesta del servidor');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                // Verificar si hay datos
-                                if (data && data.length > 0) {
-                                    vehiculoSelect.innerHTML = '<option value="" selected disabled>Seleccione un vehículo</option>';
-                                    
-                                    data.forEach(vehiculo => {
-                                        const option = document.createElement('option');
-                                        option.value = vehiculo.id;
-                                        option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
-                                        vehiculoSelect.appendChild(option);
-                                    });
-                                } else {
-                                    vehiculoSelect.innerHTML = '<option value="" selected disabled>Este cliente no tiene vehículos registrados</option>';
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                vehiculoSelect.innerHTML = '<option value="" selected disabled>Error al cargar vehículos</option>';
-                            });
-                    } else {
-                        vehiculoSelect.innerHTML = '<option value="" selected disabled>Primero seleccione un cliente</option>';
-                    }
-                });
-            }
-
-            // También inicializar el evento para los múltiples modales de edición
-            {% if citas %}
-                {% for cita in citas %}
-                    const clienteEditSelect{{ cita.id }} = document.getElementById('edit_cliente{{ cita.id }}');
-                    const vehiculoEditSelect{{ cita.id }} = document.getElementById('edit_vehiculo{{ cita.id }}');
-                    
-                    if (clienteEditSelect{{ cita.id }} && vehiculoEditSelect{{ cita.id }}) {
-                        clienteEditSelect{{ cita.id }}.addEventListener('change', function() {
-                            const clienteId = this.value;
-                            
-                            if (clienteId) {
-                                fetch(`/api/vehiculos-por-cliente/${clienteId}/`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        vehiculoEditSelect{{ cita.id }}.innerHTML = '<option value="" selected disabled>Seleccione un vehículo</option>';
-                                        
-                                        data.forEach(vehiculo => {
-                                            const option = document.createElement('option');
-                                            option.value = vehiculo.id;
-                                            option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
-                                            vehiculoEditSelect{{ cita.id }}.appendChild(option);
-                                        });
-                                    })
-                                    .catch(error => console.error('Error:', error));
-                            } else {
-                                vehiculoEditSelect{{ cita.id }}.innerHTML = '<option value="" selected disabled>Primero seleccione un cliente</option>';
-                            }
-                        });
-                    }
-                {% endfor %}
-            {% endif %}
-        });
-    </script>
-    {% endblock %}
-{% endblock %}
-
-{% block scripts %}
-<script>
-    // Cargar vehículos por cliente
-    document.addEventListener('DOMContentLoaded', function() {
-        // Abrir el modal automáticamente si se recibe el parámetro open_modal=true
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('open_modal') === 'true') {
-            var nuevaCitaModal = new bootstrap.Modal(document.getElementById('nuevaCitaModal'));
-            nuevaCitaModal.show();
-        }
-
-        // Resto del código JavaScript existente...
-        var clienteSelect = document.getElementById('cliente_cita');
-        var vehiculoSelect = document.getElementById('vehiculo_cita');
-        
-        if (clienteSelect) {
-            clienteSelect.addEventListener('change', function() {
-                var clienteId = this.value;
-                if (clienteId) {
-                    fetch(`/api/vehiculos-por-cliente/${clienteId}/`)
-                        .then(response => response.json())
-                        .then(data => {
-                            vehiculoSelect.innerHTML = '<option value="" selected disabled>Seleccione un vehículo</option>';
-                            data.forEach(function(vehiculo) {
-                                var option = document.createElement('option');
-                                option.value = vehiculo.id;
-                                option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
-                                vehiculoSelect.appendChild(option);
-                            });
-                        });
-                } else {
-                    vehiculoSelect.innerHTML = '<option value="" selected disabled>Primero seleccione un cliente</option>';
-                }
-            });
-        }
-    });
-</script>
 {% endblock %}

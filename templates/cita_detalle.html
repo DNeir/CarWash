@@ -103,10 +103,10 @@
         
         <div class="row mb-4">
             <div class="col-md-8">
-                <h1 class="detail-title">
-                    <i class="fas fa-calendar-check"></i> Detalle de Cita #{{ cita.id }}
+                <h1 class="detail-title" style="color: white !important;">
+                    <i class="fas fa-calendar-check" style="color: #5bc0be !important;"></i> Detalle de Cita #{{ cita.id }}
                 </h1>
-                <p class="detail-subtitle">
+                <p class="detail-subtitle" style="color: #e0e0e0 !important;">
                     Fecha de creación: {{ cita.fecha_hora|date:"d/m/Y H:i" }}
                 </p>
             </div>
@@ -125,7 +125,7 @@
                 <div class="detail-info mb-4">
                     <div class="row">
                         <div class="col-md-6">
-                            <h3><i class="fas fa-info-circle"></i> Información de la Cita</h3>
+                            <h3 style="color: white !important;"><i class="fas fa-info-circle" style="color: #5bc0be !important;"></i> Información de la Cita</h3>
                             <table class="table">
                                 <tr>
                                     <th>Estado:</th>
@@ -152,7 +152,7 @@
                             </table>
                         </div>
                         <div class="col-md-6">
-                            <h3><i class="fas fa-car"></i> Información del Vehículo</h3>
+                            <h3 style="color: white !important;"><i class="fas fa-car" style="color: #5bc0be !important;"></i> Información del Vehículo</h3>
                             <table class="table">
                                 <tr>
                                     <th>Vehículo:</th>
@@ -176,7 +176,7 @@
                     
                     <div class="row mt-4">
                         <div class="col-md-6">
-                            <h3><i class="fas fa-user"></i> Información del Cliente</h3>
+                            <h3 style="color: white !important;"><i class="fas fa-user" style="color: #5bc0be !important;"></i> Información del Cliente</h3>
                             <table class="table">
                                 <tr>
                                     <th>Nombre:</th>
@@ -197,7 +197,7 @@
                             </table>
                         </div>
                         <div class="col-md-6">
-                            <h3><i class="fas fa-list-check"></i> Servicios</h3>
+                            <h3 style="color: white !important;"><i class="fas fa-list-check" style="color: #5bc0be !important;"></i> Servicios</h3>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -243,8 +243,8 @@
                             <input type="hidden" name="notas" value="{{ cita.notas }}">
                             
                             <div class="mb-3">
-                                <label for="estado" class="form-label">Cambiar estado:</label>
-                                <select name="estado" id="estado" class="form-select">
+                                <label for="estado" class="form-label" style="color: #333333 !important; font-weight: 600;">Cambiar estado:</label>
+                                <select name="estado" id="estado" class="form-select" style="color: #333333 !important;">
                                     <option value="Pendiente" {% if cita.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
                                     <option value="En proceso" {% if cita.estado == 'En proceso' %}selected{% endif %}>En proceso</option>
                                     <option value="Completada" {% if cita.estado == 'Completada' %}selected{% endif %}>Completada</option>
@@ -252,8 +252,8 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="empleado" class="form-label">Cambiar empleado:</label>
-                                <select name="empleado" id="empleado" class="form-select">
+                                <label for="empleado" class="form-label" style="color: #333333 !important; font-weight: 600;">Cambiar empleado:</label>
+                                <select name="empleado" id="empleado" class="form-select" style="color: #333333 !important;">
                                     {% for empleado in empleados %}
                                         <option value="{{ empleado.id }}" {% if empleado.id == cita.empleado.id %}selected{% endif %}>
                                             {{ empleado.nombre }} ({{ empleado.puesto }})
@@ -342,8 +342,8 @@
                     <div class="modal-body">
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="edit_vehiculo" class="form-label">Vehículo</label>
-                                <select class="form-select" id="edit_vehiculo" name="vehiculo" required>
+                                <label for="edit_vehiculo" class="form-label" style="color: #333333 !important; font-weight: 600;">Vehículo</label>
+                                <select class="form-select" id="edit_vehiculo" name="vehiculo" required style="color: #333333 !important;">
                                     {% for vehiculo in cita.vehiculo.cliente.vehiculo_set.all %}
                                         <option value="{{ vehiculo.id }}" {% if vehiculo.id == cita.vehiculo.id %}selected{% endif %}>
                                             {{ vehiculo }} ({{ vehiculo.placa }})
@@ -352,15 +352,15 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="edit_fecha_hora" class="form-label">Fecha y Hora</label>
+                                <label for="edit_fecha_hora" class="form-label" style="color: #333333 !important; font-weight: 600;">Fecha y Hora</label>
                                 <input type="datetime-local" class="form-control" id="edit_fecha_hora" 
-                                       name="fecha_hora" value="{{ cita.fecha_hora|date:'Y-m-d\TH:i' }}" required>
+                                       name="fecha_hora" value="{{ cita.fecha_hora|date:'Y-m-d\TH:i' }}" required style="color: #333333 !important;">
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="edit_estado" class="form-label">Estado</label>
-                                <select class="form-select" id="edit_estado" name="estado">
+                                <label for="edit_estado" class="form-label" style="color: #333333 !important; font-weight: 600;">Estado</label>
+                                <select class="form-select" id="edit_estado" name="estado" style="color: #333333 !important;">
                                     <option value="Pendiente" {% if cita.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
                                     <option value="En proceso" {% if cita.estado == 'En proceso' %}selected{% endif %}>En proceso</option>
                                     <option value="Completada" {% if cita.estado == 'Completada' %}selected{% endif %}>Completada</option>
@@ -368,8 +368,8 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="edit_empleado" class="form-label">Empleado</label>
-                                <select class="form-select" id="edit_empleado" name="empleado" required>
+                                <label for="edit_empleado" class="form-label" style="color: #333333 !important; font-weight: 600;">Empleado</label>
+                                <select class="form-select" id="edit_empleado" name="empleado" required style="color: #333333 !important;">
                                     {% for empleado in empleados %}
                                         <option value="{{ empleado.id }}" {% if empleado.id == cita.empleado.id %}selected{% endif %}>
                                             {{ empleado.nombre }} ({{ empleado.puesto }})
@@ -379,7 +379,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Servicios</label>
+                            <label class="form-label" style="color: #333333 !important; font-weight: 600;">Servicios</label>
                             <div class="row">
                                 {% for servicio in servicios %}
                                 <div class="col-md-6">
@@ -387,7 +387,7 @@
                                         <input class="form-check-input" type="checkbox" name="servicio" value="{{ servicio.id }}"
                                             id="servicio{{ servicio.id }}" 
                                             {% if servicio in cita.servicios.all %}checked{% endif %}>
-                                        <label class="form-check-label" for="servicio{{ servicio.id }}">
+                                        <label class="form-check-label" for="servicio{{ servicio.id }}" style="color: #333333 !important;">
                                             {{ servicio.nombre }} - ${{ servicio.precio }}
                                         </label>
                                     </div>
