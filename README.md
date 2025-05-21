@@ -39,6 +39,7 @@ Puedes instalar los requisitos con:
 pip install -r requirements.txt
 ```
 (Si no tienes el archivo requirements.txt, usa: pip install django)
+(No olvides crear el entorno de python en caso de usar VSCode)
 
 ## 👨‍💻 ¿Qué puedes hacer?
 Registros y utenticacion de usuarios y vehículos
