@@ -64,13 +64,7 @@ Clona el repositorio:
 git clone https://github.com/DNeir/CarWash.git
 cd CarWash
 ```
-
-Ejecuta las migraciones:
-
-```plaintext
-python manage.py makemigrations
-python manage.py migrate
-```
+La app ya cuenta con las migraciones necesarias
 Inicia el servidor de desarrollo:
 
 ```plaintext
