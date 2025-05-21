@@ -423,10 +423,11 @@ def servicios(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         precio = request.POST.get('precio')
+        descripcion = request.POST.get('descripcion')
         if nombre and precio:
             try:
                 precio = float(precio)
-                servicio.objects.create(nombre=nombre, precio=precio)
+                servicio.objects.create(nombre=nombre, precio=precio, descripcion=descripcion)
             except ValueError:
                 pass
     servicios = servicio.objects.all().order_by('nombre')
