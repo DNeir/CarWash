@@ -405,3 +405,42 @@
     </script>
     {% endblock %}
 {% endblock %}
+
+{% block scripts %}
+<script>
+    // Cargar vehículos por cliente
+    document.addEventListener('DOMContentLoaded', function() {
+        // Abrir el modal automáticamente si se recibe el parámetro open_modal=true
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('open_modal') === 'true') {
+            var nuevaCitaModal = new bootstrap.Modal(document.getElementById('nuevaCitaModal'));
+            nuevaCitaModal.show();
+        }
+
+        // Resto del código JavaScript existente...
+        var clienteSelect = document.getElementById('cliente_cita');
+        var vehiculoSelect = document.getElementById('vehiculo_cita');
+        
+        if (clienteSelect) {
+            clienteSelect.addEventListener('change', function() {
+                var clienteId = this.value;
+                if (clienteId) {
+                    fetch(`/api/vehiculos-por-cliente/${clienteId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            vehiculoSelect.innerHTML = '<option value="" selected disabled>Seleccione un vehículo</option>';
+                            data.forEach(function(vehiculo) {
+                                var option = document.createElement('option');
+                                option.value = vehiculo.id;
+                                option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
+                                vehiculoSelect.appendChild(option);
+                            });
+                        });
+                } else {
+                    vehiculoSelect.innerHTML = '<option value="" selected disabled>Primero seleccione un cliente</option>';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

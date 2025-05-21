@@ -10,7 +10,7 @@
         <div class="container text-center">
             <h1><i class="fas fa-car-wash"></i> CarWash</h1>
             <p class="lead">Sistema de Gestión de Lavado de Autos</p>
-            <a href="{% url 'citas' %}" class="btn btn-light btn-lg">
+            <a href="{% url 'citas' %}?open_modal=true" class="btn btn-light btn-lg" style="position: relative; z-index: 2;">
                 <i class="fas fa-calendar-plus"></i> Agendar Cita
             </a>
         </div>
@@ -173,36 +173,36 @@
         <div class="col-md-3 col-sm-6 mb-4">
             <div class="stat-card bg-primary text-white">
                 <div class="stat-card-body">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-users text-white"></i>
                     <h5>Clientes</h5>
-                    <h3>{{ clientes_count|default:"0" }}</h3>
+                    <h3 class="text-white">{{ clientes_count|default:"0" }}</h3>
                 </div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6 mb-4">
             <div class="stat-card bg-success text-white">
                 <div class="stat-card-body">
-                    <i class="fas fa-car"></i>
+                    <i class="fas fa-car text-white"></i>
                     <h5>Vehículos</h5>
-                    <h3>{{ vehiculos_count|default:"0" }}</h3>
+                    <h3 class="text-white">{{ vehiculos_count|default:"0" }}</h3>
                 </div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6 mb-4">
-            <div class="stat-card bg-warning">
+            <div class="stat-card bg-warning text-white">
                 <div class="stat-card-body">
-                    <i class="fas fa-calendar-check"></i>
+                    <i class="fas fa-calendar-check text-white"></i>
                     <h5>Citas Hoy</h5>
-                    <h3>{{ citas_hoy|default:"0" }}</h3>
+                    <h3 class="text-white">{{ citas_hoy|default:"0" }}</h3>
                 </div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6 mb-4">
             <div class="stat-card bg-info text-white">
                 <div class="stat-card-body">
-                    <i class="fas fa-tasks"></i>
+                    <i class="fas fa-tasks text-white"></i>
                     <h5>Servicios</h5>
-                    <h3>{{ servicios_count|default:"0" }}</h3>
+                    <h3 class="text-white">{{ servicios_count|default:"0" }}</h3>
                 </div>
             </div>
         </div>

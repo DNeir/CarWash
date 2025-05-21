@@ -6,6 +6,7 @@ from DbWash.models import Empleado, Cliente, Vehiculo, servicio, Cita
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from datetime import date
 
 def index(request):
     # Obtener las próximas 5 citas
@@ -13,9 +14,19 @@ def index(request):
     # Obtener los 5 servicios más destacados (puedes ajustar este criterio)
     servicios = servicio.objects.all()[:5]
     
+    # Contar registros para el panel de estadísticas
+    clientes_count = Cliente.objects.count()
+    vehiculos_count = Vehiculo.objects.count()
+    citas_hoy = Cita.objects.filter(fecha_hora__date=date.today()).count()
+    servicios_count = servicio.objects.count()
+    
     context = {
         'citas': citas,
-        'servicios': servicios
+        'servicios': servicios,
+        'clientes_count': clientes_count,
+        'vehiculos_count': vehiculos_count,
+        'citas_hoy': citas_hoy,
+        'servicios_count': servicios_count
     }
     return render(request, 'index.html', context)
 
