@@ -21,7 +21,14 @@ def index(request):
 
 
 def empleados(request):
-    return render(request, 'empleados.html', {})
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        telefono = request.POST.get('telefono')
+        puesto = request.POST.get('puesto')
+        if nombre and telefono and puesto:
+            Empleado.objects.create(nombre=nombre, telefono=telefono, puesto=puesto)
+    empleados = Empleado.objects.all().order_by('nombre')
+    return render(request, 'empleados.html', {'empleados': empleados})
 
 def citas(request):
     # Parámetros de filtrado

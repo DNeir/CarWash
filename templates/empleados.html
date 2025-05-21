@@ -4,9 +4,70 @@
     Empleados
 {% endblock %}
 
-
-
 {% block content %}
-    <h1>Empleados</h1>
-    <p>Ver empleados o agregar empleados</p>
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-user-tie"></i> Registro de Empleados</h2>
+            <p class="lead">Agrega nuevos empleados al sistema</p>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+                <div class="col-md-4">
+                    <label for="nombre" class="form-label">Nombre completo</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="puesto" class="form-label">Puesto/Cargo</label>
+                    <input type="text" class="form-control" id="puesto" name="puesto" required>
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Registrar Empleado
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-list"></i> Lista de Empleados</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Puesto/Cargo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for empleado in empleados %}
+                        <tr>
+                            <td>{{ empleado.id }}</td>
+                            <td>{{ empleado.nombre }}</td>
+                            <td>{{ empleado.telefono }}</td>
+                            <td>{{ empleado.puesto }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No hay empleados registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
