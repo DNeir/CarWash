@@ -406,3 +406,17 @@ def vehiculos_por_cliente(request, cliente_id):
         for v in vehiculos
     ]
     return JsonResponse(data, safe=False)
+
+def servicios(request):
+    from DbWash.models import servicio
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        precio = request.POST.get('precio')
+        if nombre and precio:
+            try:
+                precio = float(precio)
+                servicio.objects.create(nombre=nombre, precio=precio)
+            except ValueError:
+                pass
+    servicios = servicio.objects.all().order_by('nombre')
+    return render(request, 'servicios.html', {'servicios': servicios})
