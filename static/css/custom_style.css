@@ -1,0 +1,71 @@
+.table-custom-dark {
+    background-color: #1e1e2f;
+    color: #ffffff;
+    border-color: #3c3c4f;
+}
+
+.table-custom-dark thead {
+    background-color: #29293d;
+    color: #00d1ff;
+}
+
+.table-custom-dark tbody tr:hover {
+    background-color: #2e2e42;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.card.bg-custom-dark {
+    background-color: #1a1a2e;
+    color: #ffffff;
+}
+.custom-table-dark tbody tr.fila-par {
+    background-color: #2a2d3e;
+}
+
+.custom-table-dark tbody tr.fila-impar {
+    background-color: #1f2130;
+}
+
+.custom-table-dark tbody tr:hover {
+    background-color: #343850;
+}
+
+.custom-table-dark th,
+.custom-table-dark td {
+    color: #ffffff;
+    vertical-align: middle;
+}
+
+/* Estilos globales para mejorar contraste en selectores */
+select option {
+    background-color: white !important;
+    color: #333333 !important;
+}
+
+.form-select {
+    background-color: white !important;
+    color: #333333 !important;
+}
+
+.custom-btn {
+    background-color: #3b82f6;
+    /* Azul claro tipo Tailwind */
+    color: white;
+    border: none;
+}
+
+.custom-btn:hover {
+    background-color: #2563eb;
+    /* Azul más oscuro al pasar el mouse */
+    color: white;
+}
+
+.modal-body label,
+.card-body label {
+    color: #333333 !important;
+    font-weight: 600 !important;
+}
