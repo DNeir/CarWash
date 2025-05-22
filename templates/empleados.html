@@ -49,6 +49,7 @@
                             <th>Nombre</th>
                             <th>Teléfono</th>
                             <th>Puesto/Cargo</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,7 +58,14 @@
                             <td>{{ empleado.id }}</td>
                             <td>{{ empleado.nombre }}</td>
                             <td>{{ empleado.telefono }}</td>
-                            <td>{{ empleado.puesto }}</td>
+                            <td>{{ empleado.puesto }}</td><td>
+                            <!-- Botón de eliminar con confirmación -->
+                            <a href="{% url 'eliminar_empleado' empleado.id %}" 
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('¿Estás seguro de eliminar a {{ empleado.nombre }}?');">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
+                        </td>
                         </tr>
                         {% empty %}
                         <tr>

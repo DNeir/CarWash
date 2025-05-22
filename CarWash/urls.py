@@ -22,4 +22,7 @@ urlpatterns = [
     path('vehiculo/editar/<int:vehiculo_id>/', views.vehiculo_editar, name='vehiculo_editar'),
     path('vehiculo/eliminar/<int:vehiculo_id>/', views.vehiculo_eliminar, name='vehiculo_eliminar'),
     path('servicios/', views.servicios, name='servicios'),
+    
+    # empleados
+    path('empleados/eliminar/<int:id>/', views.eliminar_empleado, name='eliminar_empleado'),
 ]
