@@ -41,6 +41,13 @@ def empleados(request):
     empleados = Empleado.objects.all().order_by('nombre')
     return render(request, 'empleados.html', {'empleados': empleados})
 
+def eliminar_empleado(request, id):
+    empleado = get_object_or_404(Empleado, id=id)
+    nombre_empleado = empleado.nombre
+    empleado.delete()
+    messages.success(request, f'Empleado {nombre_empleado} eliminado correctamente')
+    return redirect('empleados')  # Reemplaza con el nombre de tu URL
+
 def citas(request):
     # Parámetros de filtrado
     fecha = request.GET.get('fecha', '')
